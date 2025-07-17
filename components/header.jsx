@@ -50,13 +50,13 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem  asChild>
+                <DropdownMenuItem>
                   <Link href={"/resume"} className="flex items-center gap-2">
                     <FileText className="h-4 w-4" />
                     <span className="hidden md:block">Build Resume</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem  asChild>
+                <DropdownMenuItem>
                   {" "}
                   <Link
                     href={"/ai-cover-letter"}
@@ -66,7 +66,7 @@ const Header = () => {
                     <span className="hidden md:block">Cover Letter</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem  asChild>
+                <DropdownMenuItem>
                   {" "}
                   <Link href={"/interview"} className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
@@ -79,7 +79,7 @@ const Header = () => {
             </DropdownMenu>
           </SignedIn>
           <SignedOut>
-            <SignInButton mode="modal" asChild>
+            <SignInButton mode="modal">
               <Button variant="outline">Sign In</Button>
             </SignInButton>
           </SignedOut>
