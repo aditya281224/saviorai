@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { checkUser } from "@/lib/checkUser";
+import { dark } from "@clerk/themes";
+
 
 const Header = async () => {
   await checkUser()
