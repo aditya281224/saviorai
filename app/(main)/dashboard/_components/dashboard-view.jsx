@@ -20,8 +20,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
-  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -49,6 +47,7 @@ const DashboardView= ({insights}) => {
         return "bg-gray-500";
     }
   };
+
   
   const getMarketOutlookInfo = (outlook) => {
     switch (outlook.toLowerCase()) {

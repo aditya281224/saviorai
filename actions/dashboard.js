@@ -42,6 +42,7 @@ export const generateAIInsights = async (industry) => {
 };
 
 export async function getIndustryInsights() {
+  // CHECK USER LOGGED IN OR NOT BEFORE UPDATING
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
