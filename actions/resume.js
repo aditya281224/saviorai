@@ -1,3 +1,5 @@
+"use server"
+
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -12,7 +14,7 @@ export async function saveResume(content){
 
   const user = await db.user.findUnique({
     where:{
-      clerkUser:userId,
+      clerkUserId:userId,
     }
   })
   
@@ -49,7 +51,7 @@ export async function getResume() {
 
   const user = await db.user.findUnique({
     where:{
-      clerkUser:userId,
+      clerkUserId:userId,
     }
   })
   
@@ -73,7 +75,7 @@ export async function improveWithAi({current,type}){
 
   const user = await db.user.findUnique({
     where:{
-      clerkUser:userId,
+      clerkUserId:userId,
     }
   })
   
