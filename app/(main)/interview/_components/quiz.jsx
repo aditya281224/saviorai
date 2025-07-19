@@ -16,6 +16,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";
 import { toast } from "sonner";
+import QuizResult from "./quiz-result";
 
 const Quiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -35,7 +36,6 @@ const Quiz = () => {
     setData: setResultData,
   } = useFetch(saveQuizResult);
 
-  console.log(resultData);
 
   useEffect(() => {
     if (quizData) {
@@ -78,8 +78,26 @@ const Quiz = () => {
     }
   };
 
+  const startNewQuiz=()=>{
+    setCurrentQuestion(0);
+    setAnswers([]);
+    setShowExplanation(false);
+    generateQuizfn();
+    setResultData(null)
+  }
+
   if (generatingQuiz) {
     return <BarLoader className="mt-4" width={"100%"} color="gray" />;
+  }
+
+  
+
+  if(resultData){
+    return(
+      <div>
+        <QuizResult result={resultData} onStartNew={startNewQuiz}/>
+      </div>
+    )
   }
 
   if (!quizData) {
