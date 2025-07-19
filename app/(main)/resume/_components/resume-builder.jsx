@@ -241,7 +241,10 @@ const ResumeBuilder = ({ initialContent }) => {
           </form>
         </TabsContent>
 
-        <TabsContent></TabsContent>
+        <TabsContent value="preview">
+
+
+        </TabsContent>
       </Tabs>
     </div>
   );
