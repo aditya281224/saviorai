@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Trophy, XCircle } from "lucide-react";

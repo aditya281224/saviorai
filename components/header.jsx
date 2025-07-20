@@ -23,7 +23,7 @@ import { dark } from "@clerk/themes";
 
 const Header = async () => {
   await checkUser()
-  console.log("in")
+  
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -61,16 +61,7 @@ const Header = async () => {
                     <span className="hidden md:block">Build Resume</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  {" "}
-                  <Link
-                    href={"/ai-cover-letter"}
-                    className="flex items-center gap-2"
-                  >
-                    <PenBox className="h-4 w-4" />
-                    <span className="hidden md:block">Cover Letter</span>
-                  </Link>
-                </DropdownMenuItem>
+        
                 <DropdownMenuItem>
                   {" "}
                   <Link href={"/interview"} className="flex items-center gap-2">

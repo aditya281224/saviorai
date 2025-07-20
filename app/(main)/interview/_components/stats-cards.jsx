@@ -14,7 +14,7 @@ const StatsCards = ({assessments}) => {
 
   const latest = ()=>{
     if(!assessments?.length) return null;
-    return assessments[0];
+    return assessments[assessments.length-1];
   }
 
   const totalQuestions = ()=>{
