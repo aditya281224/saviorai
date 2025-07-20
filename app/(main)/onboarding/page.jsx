@@ -1,7 +1,9 @@
 import { getUserOnboardingStatus } from '@/actions/user'
 import { industries } from '@/data/industries'
 import { redirect } from "next/navigation";
-import OnboardingForm from './_components/onboarding-form';
+import OnboardingForm from "@/app/(main)/onboarding/_components/onboarding-form";
+
+
 
 
 
