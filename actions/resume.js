@@ -22,6 +22,9 @@ export async function saveResume(content){
   if(!user) throw new Error("User not found");
 
   try{
+
+        await new Promise((res) => setTimeout(res, 1000));
+
     const resume = await db.resume.upsert({
       where: {
         userId:user.id,

@@ -31,7 +31,7 @@ export const generateAIInsights = async (industry) => {
           Growth rate should be a percentage.
           Include at least 5 skills and trends.
         `;
-
+  await new Promise((res) => setTimeout(res, 1000));
   const result = await model.generateContent(prompt);
   const response = result.response;
 

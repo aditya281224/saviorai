@@ -44,7 +44,8 @@ export async function generateQuiz() {
   `;
 
   try {
-    console.log("Here");
+        await new Promise((res) => setTimeout(res, 1000));
+
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
