@@ -155,7 +155,7 @@ const Quiz = () => {
           </div>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
         <Button
           onClick={() => {
             setCurrentQuestion((prev) => prev - 1);
