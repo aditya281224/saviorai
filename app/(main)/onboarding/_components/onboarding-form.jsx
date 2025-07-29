@@ -32,6 +32,8 @@ import { Loader2 } from "lucide-react";
 
 const OnboardingForm = ({ industires }) => {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
+
 
   const router = useRouter();
 
@@ -53,9 +55,12 @@ const OnboardingForm = ({ industires }) => {
 
   const onSubmit = async (values) => {
     try {
+
       const formattedIndustry = `${values.industry}-${values.subIndustry
         .toLowerCase()
         .replace(/ /g, "-")}`;
+
+      setSubmissions((prev) => [...prev, { ...values, industry: formattedIndustry }]);  
 
       await updateUserFn({
         ...values,

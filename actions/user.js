@@ -92,3 +92,46 @@ export async function getUserOnboardingStatus() {
     throw new Error("Failed to check onboarding status"+error.message);
   }
 }
+
+
+
+export async function profile() {
+
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try{
+   const user = await db.user.findUnique({
+  where: { clerkUserId: userId },
+  select: {
+    name: true,
+    email: true,
+    bio:true,
+    experience:true,
+    skills:true,
+    
+    industryInsight: {
+      select: {
+        industry: true
+         // select specific fields from related table
+      },
+    },
+  },
+});
+
+
+
+    ;return user 
+   }
+  catch(error){
+    console.error("Fetch user error:", error);
+    throw new Error("Failed to find user"+error.message);
+  }
+
+}

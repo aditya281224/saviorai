@@ -6,7 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Download, Edit, Loader2, Monitor, Save } from "lucide-react";
+import {
+  AlertTriangle,
+  Download,
+  Edit,
+  Loader2,
+  Monitor,
+  Save,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import EntryForm from "./entry-form";
@@ -20,14 +27,12 @@ import useFetch from "@/hooks/use-fetch";
 import { saveResume } from "@/actions/resume";
 import { toast } from "sonner";
 
-
 const ResumeBuilder = ({ initialContent }) => {
   const [activeTab, setActiveTab] = useState("edit");
-  const [resumeMode,setResumeMode] = useState("preview");
-  const [previewContent,setPreviewContent]=useState(initialContent);
-  const {user}=useUser();
-  const [isGenerating,setIsGenerating]=useState(false);
-
+  const [resumeMode, setResumeMode] = useState("preview");
+  const [previewContent, setPreviewContent] = useState(initialContent);
+  const { user } = useUser();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const {
     control,
@@ -47,7 +52,7 @@ const ResumeBuilder = ({ initialContent }) => {
     },
   });
 
-    const {
+  const {
     loading: isSaving,
     fn: saveResumeFn,
     data: saveResult,
@@ -60,16 +65,14 @@ const ResumeBuilder = ({ initialContent }) => {
     if (initialContent) setActiveTab("preview");
   }, [initialContent]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (activeTab === "edit") {
       const newContent = getCombinedContent();
       setPreviewContent(newContent ? newContent : initialContent);
     }
   }, [formValues, activeTab]);
 
-  
-
-  const getContactMarkdown=()=>{
+  const getContactMarkdown = () => {
     const { contactInfo } = formValues;
     const parts = [];
     if (contactInfo.email) parts.push(`📧 ${contactInfo.email}`);
@@ -82,9 +85,9 @@ const ResumeBuilder = ({ initialContent }) => {
       ? `## <div align="center">${user.fullName}</div>
         \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
       : "";
-  }
+  };
 
-  const getCombinedContent=()=>{
+  const getCombinedContent = () => {
     const { summary, skills, experience, education, projects } = formValues;
     return [
       getContactMarkdown(),
@@ -96,7 +99,7 @@ const ResumeBuilder = ({ initialContent }) => {
     ]
       .filter(Boolean)
       .join("\n\n");
-  }
+  };
 
   useEffect(() => {
     if (saveResult && !isSaving) {
@@ -107,68 +110,68 @@ const ResumeBuilder = ({ initialContent }) => {
     }
   }, [saveResult, saveError, isSaving]);
 
-
-  const onSubmit=async()=>{
+  const onSubmit = async () => {
     try {
       await saveResumeFn(previewContent);
     } catch (error) {
       console.error("Error saving resume:", error);
     }
-  }
+  };
 
- const generatePDF = async () => {
+  const generatePDF = async () => {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
       if (!element) throw new Error("Resume element not found");
 
-      // Create a new div with the same content (not a clone)
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = element.innerHTML;
-      tempDiv.style.width = "210mm";
-      tempDiv.style.minHeight = "297mm";
-      tempDiv.style.padding = "20mm";
-      tempDiv.style.backgroundColor = "white";
-      tempDiv.style.color = "black";
-      tempDiv.style.boxSizing = "border-box";
-      tempDiv.style.position = "absolute";
-      tempDiv.style.left = "-9999px";
-
-      document.body.appendChild(tempDiv);
-
-      const canvas = await html2canvas(tempDiv, {
-        scale: 2,
-        logging: true,
+      const scale = 2; // improve quality
+      const canvas = await html2canvas(element, {
+        scale,
         useCORS: true,
-        allowTaint: false,
-        backgroundColor: "#FFFFFF",
-        scrollX: 0,
-        scrollY: 0,
-        onclone: (clonedDoc, element) => {
-          // Ensure styles are applied in the clone
-          element.style.width = "210mm";
-          element.style.minHeight = "297mm";
-        },
+        backgroundColor: "#ffffff",
       });
 
-      document.body.removeChild(tempDiv);
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        throw new Error("Canvas rendering failed");
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
+      // Convert canvas height to PDF units (mm)
+      const pdfImgWidth = pageWidth;
+      const pdfImgHeight = (canvasHeight * pdfImgWidth) / canvasWidth;
+
+      const totalPages = Math.ceil(pdfImgHeight / pageHeight);
+
+      for (let page = 0; page < totalPages; page++) {
+        const pageCanvas = document.createElement("canvas");
+        const pageCtx = pageCanvas.getContext("2d");
+
+        const pageHeightPx = (pageHeight * canvasWidth) / pageWidth; // convert mm to px
+
+        pageCanvas.width = canvasWidth;
+        pageCanvas.height = pageHeightPx;
+
+        pageCtx?.drawImage(
+          canvas,
+          0,
+          page * pageHeightPx,
+          canvasWidth,
+          pageHeightPx,
+          0,
+          0,
+          canvasWidth,
+          pageHeightPx
+        );
+
+        const imgData = pageCanvas.toDataURL("image/png");
+
+        if (page > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, 0, pdfImgWidth, pageHeight);
       }
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const imgWidth = pdf.internal.pageSize.getWidth();
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
-      pdf.save(`${user?.fullName.toLowerCase() + "-resume" || "resume"}.pdf`);
+      pdf.save(`${user?.fullName?.toLowerCase() || "resume"}.pdf`);
     } catch (error) {
       console.error("PDF generation error:", error);
       alert(`Failed to generate PDF: ${error.message}`);
@@ -177,41 +180,35 @@ const ResumeBuilder = ({ initialContent }) => {
     }
   };
 
-
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between items-center gap-2">
         <h1 className="font-bold text-5xl md:text-6xl">Resume Builder</h1>
 
         <div className="sapce-x-2">
-          <Button
-            onClick={onSubmit}
-            disabled={isSaving}
-            variant="destructive"
-          >
+          <Button onClick={onSubmit} disabled={isSaving} variant="destructive">
             {isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
-                  </>
-              ) : (
-                  <>
-                    <Save className="h-4 w-4" /> Save
-                  </>
-              )}
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" /> Save
+              </>
+            )}
           </Button>
 
           <Button onClick={generatePDF} disabled={isGenerating}>
-            {
-              isGenerating ? (
-                <>
-                <Loader2 className="h-4 w-4 animate-spin"/>
-                  Generating PDF...
-                </>
-              ):(
-                <>
-              <Download className="h-4 w-4" />
-            Download
-            </>
+            {isGenerating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <Download className="h-4 w-4" />
+                Download
+              </>
             )}
           </Button>
         </div>
@@ -246,7 +243,7 @@ const ResumeBuilder = ({ initialContent }) => {
                 <div className="space-y-2">
                   <label className="text-lg font-medium">Mobile Number</label>
                   <Input
-                    {...register("contactInfo.contactInfo")}
+                    {...register("contactInfo.mobile")}
                     type="tel"
                     placeholder="+ 1 987 654 3211"
                     error={errors.contactInfo?.mobile}
@@ -312,8 +309,6 @@ const ResumeBuilder = ({ initialContent }) => {
               )}
             </div>
 
-
-            
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Skills</h3>
               <Controller
@@ -333,9 +328,7 @@ const ResumeBuilder = ({ initialContent }) => {
               )}
             </div>
 
-            
-            
-              <div className="space-y-4">
+            <div className="space-y-4">
               <h3 className="text-lg font-medium">Work Experience</h3>
               <Controller
                 name="experience"
@@ -349,10 +342,12 @@ const ResumeBuilder = ({ initialContent }) => {
                 )}
               />
               {errors.experience && (
-                <p className="text-sm text-red-500">{errors.experience.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.experience.message}
+                </p>
               )}
             </div>
-            
+
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Education</h3>
               <Controller
@@ -364,11 +359,12 @@ const ResumeBuilder = ({ initialContent }) => {
                     entries={field.value}
                     onChange={field.onChange}
                   />
-                  
                 )}
               />
               {errors.education && (
-                <p className="text-sm text-red-500">{errors.education.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.education.message}
+                </p>
               )}
             </div>
 
@@ -386,51 +382,44 @@ const ResumeBuilder = ({ initialContent }) => {
                 )}
               />
               {errors.projects && (
-                <p className="text-sm text-red-500">{errors.projects.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.projects.message}
+                </p>
               )}
             </div>
-            
-
-            
-            
-            
           </form>
         </TabsContent>
 
         <TabsContent value="preview">
-              
-
-          <Button variant="Link" type="button" className="mb-2"
-          onClick={()=>
-            setResumeMode(resumeMode==="preview"?"edit":"preview")
-          }
-          >
-            {
-              resumeMode === "preview" ? (
-                <>
-                <Edit className="h-4 w-4"/>
-            Edit Resume
-                </>
-              ):(
-                <>
-                <Monitor className="h-4 w-4"/>
-                Show Preview
-                </>
-              )
+          <Button
+            variant="Link"
+            type="button"
+            className="mb-2"
+            onClick={() =>
+              setResumeMode(resumeMode === "preview" ? "edit" : "preview")
             }
-
+          >
+            {resumeMode === "preview" ? (
+              <>
+                <Edit className="h-4 w-4" />
+                Edit Resume
+              </>
+            ) : (
+              <>
+                <Monitor className="h-4 w-4" />
+                Show Preview
+              </>
+            )}
           </Button>
 
-          {
-            resumeMode!=="preview" && (
-              <div className="flex p-3 gap-2 items-center border-2 border-yellow-600 text-yellow-600 rounded mb-2">
-                <AlertTriangle className="h-5 w-5"/>
-                <span>
-                  You will loose edited markdown if you will update the form data
-                </span>
-              </div>
-            )
-          }
+          {resumeMode !== "preview" && (
+            <div className="flex p-3 gap-2 items-center border-2 border-yellow-600 text-yellow-600 rounded mb-2">
+              <AlertTriangle className="h-5 w-5" />
+              <span>
+                You will loose edited markdown if you will update the form data
+              </span>
+            </div>
+          )}
           <div className="border rounded-lg">
             <MDEditor
               value={previewContent}
@@ -439,13 +428,31 @@ const ResumeBuilder = ({ initialContent }) => {
               preview={resumeMode}
             />
           </div>
-          <div className="hidden">
-            <div id="resume-pdf">
+          <div
+            id="resume-pdf"
+            style={{
+              position: "absolute",
+              left: "-9999px",
+              top: "0",
+              width: "794px",
+              minHeight: "100vh", // 👈 Important
+              padding: "40px",
+              background: "white",
+              color: "black",
+              fontSize: "14px",
+              lineHeight: "1.6",
+              zIndex: -1,
+              whiteSpace: "normal",
+              overflowWrap: "break-word", // 👈 Wrap long text
+            }}
+          >
+            <div style={{ width: "100%" }}>
               <MDEditor.Markdown
                 source={previewContent}
                 style={{
                   background: "white",
                   color: "black",
+                  width: "100%",
                 }}
               />
             </div>
