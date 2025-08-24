@@ -28,7 +28,7 @@ export const generateAIInsights = async (industry) => {
           
           IMPORTANT: Return ONLY the JSON. No additional text, notes, or markdown formatting.
           Include at least 5 common roles for salary ranges.
-          Growth rate should be a percentage.
+          Growth rate should be a percentage .
           Include at least 5 skills and trends.
         `;
   await new Promise((res) => setTimeout(res, 1000));
