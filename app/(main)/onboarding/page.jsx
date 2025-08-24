@@ -8,10 +8,10 @@ import OnboardingForm from "@/app/(main)/onboarding/_components/onboarding-form"
 
 
 const OnboardingPage = async () => {
-  const {isOnboarded} = await getUserOnboardingStatus();
-  if(isOnboarded){
-    redirect("/dashboard");
-  }
+  // const {isOnboarded} = await getUserOnboardingStatus();
+  // if(isOnboarded){
+  //   redirect("/dashboard");
+  // }
   return (
     <main>
       <OnboardingForm industires={industries}/>
