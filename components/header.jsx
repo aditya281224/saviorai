@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import {
+  BookUser,
   ChevronDown,
   FileText,
   GraduationCap,
@@ -73,6 +74,15 @@ const Header = async () => {
                     <GraduationCap className="h-4 w-4" />
                     <span className="hidden md:block">
                       Interview Preparation
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  {" "}
+                  <Link href={"/mock-interview"} className="flex items-center gap-2">
+                    <BookUser className="h-4 w-4" />
+                    <span className="hidden md:block">
+                      Mock Interview
                     </span>
                   </Link>
                 </DropdownMenuItem>

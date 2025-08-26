@@ -25,17 +25,15 @@ export async function updateUser(data) {
         });
 
         if (!industryInsight) {
-          const insights = await generateAIInsights(data.industry)
-          
-              industryInsight = await db.industryInsight.create({
-                data:{
-                  industry: data.industry,
-                  ...insights,
-                  nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                }
-              })
-              
-              
+          const insights = await generateAIInsights(data.industry);
+
+          industryInsight = await db.industryInsight.create({
+            data: {
+              industry: data.industry,
+              ...insights,
+              nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            },
+          });
         }
 
         const updatedUser = await tx.user.update({
@@ -56,13 +54,12 @@ export async function updateUser(data) {
         timeout: 10000,
       }
     );
-    return {success:true,...result};
+    return { success: true, ...result };
   } catch (error) {
     console.error("Error updating user and industry", error.message);
     throw new Error("Failed to update profile");
   }
 }
-
 
 export async function getUserOnboardingStatus() {
   const { userId } = await auth();
@@ -89,14 +86,11 @@ export async function getUserOnboardingStatus() {
     };
   } catch (error) {
     console.error("Error checking onboarding status:", error);
-    throw new Error("Failed to check onboarding status"+error.message);
+    throw new Error("Failed to check onboarding status" + error.message);
   }
 }
 
-
-
 export async function profile() {
-
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -106,32 +100,27 @@ export async function profile() {
 
   if (!user) throw new Error("User not found");
 
-  try{
-   const user = await db.user.findUnique({
-  where: { clerkUserId: userId },
-  select: {
-    name: true,
-    email: true,
-    bio:true,
-    experience:true,
-    skills:true,
-    
-    industryInsight: {
+  try {
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
       select: {
-        industry: true
-         // select specific fields from related table
+        name: true,
+        email: true,
+        bio: true,
+        experience: true,
+        skills: true,
+
+        industryInsight: {
+          select: {
+            industry: true,
+          },
+        },
       },
-    },
-  },
-});
+    });
 
-
-
-    ;return user 
-   }
-  catch(error){
+    return user;
+  } catch (error) {
     console.error("Fetch user error:", error);
-    throw new Error("Failed to find user"+error.message);
+    throw new Error("Failed to find user" + error.message);
   }
-
 }

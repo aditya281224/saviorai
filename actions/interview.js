@@ -20,7 +20,7 @@ export async function generateQuiz() {
   });
 
   if (!user) throw new Error("User not found");
-  console.log("here in interview")
+  
   const prompt = `
     Generate 10 technical interview questions for a ${
       user.industry

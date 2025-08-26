@@ -35,6 +35,7 @@ model User {
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+  interviewai     InterviewAI[]
 }
 
 model Assessment {
@@ -72,6 +73,21 @@ model CoverLetter {
   jobTitle        String   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model InterviewAI {
+  id         String   @id @default(cuid())
+  userId     String
+  duration   String
+  humeChatId String?   // optional
+  feedback   String?   // optional
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  questions     Json[]
+
+  user       User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
