@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   PenBox,
   StarsIcon,
+  UserPen,
 } from "lucide-react";
 
 import {
@@ -42,7 +43,8 @@ const Header = async () => {
           <SignedIn>
             <Link href={"/profile"}>
               <Button>
-                <span>Your Profile</span>
+                <UserPen className="h-4 w-4" />
+                <span className="hidden md:block">Your Profile</span>
               </Button>
             </Link>
             <Link href={"/dashboard"}>
